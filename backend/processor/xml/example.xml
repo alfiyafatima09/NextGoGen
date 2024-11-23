@@ -1,0 +1,11 @@
+<!-- <?xml version="1.0" encoding="UTF-8"?> -->
+<root>
+    <person id="1">
+        <name>John</name>
+        <age>30</age>
+        <hobbies>
+            <hobby>Reading</hobby>
+            <hobby>Gaming</hobby>
+        </hobbies>
+    </person>
+</root>
