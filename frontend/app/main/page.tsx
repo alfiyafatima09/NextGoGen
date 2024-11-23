@@ -39,21 +39,23 @@ const Main: React.FC = () => {
         }
     };
 
+    const handleSubmit = () => {
+        if (!fileName) {
+            alert("Please upload a file before submitting.");
+            return;
+        }
+        // Logic to handle the submission (e.g., call an API)
+        alert("File submitted successfully!");
+    };
+
     return (
         <div>
             <h1 className="text-7xl mt-12 font-bold text-center">
                 Your Data <span className="text-10xl text-[#F37172]">Go</span>es Here
             </h1>
             <div className="flex flex-col justify-start mt-44 items-center min-h-screen">
-                <div className="flex flex-col md:flex-row gap-4 items-center">
-
-                    <input
-                        type="text"
-                        placeholder="Enter some text..."
-                        className="border border-gray-300 rounded-md p-2 w-96 h-28"
-                    />
-
-
+                <div className="flex flex-col gap-6 items-center">
+                    {/* File upload area */}
                     <div
                         onDrop={handleDrop}
                         onDragOver={handleDragOver}
@@ -74,6 +76,14 @@ const Main: React.FC = () => {
                             ref={fileInputRef}
                         />
                     </div>
+
+                    {/* Submit Button */}
+                    <button
+                        onClick={handleSubmit}
+                        className="mt-6 px-4 py-2 bg-[#F37172] text-white font-bold rounded-md"
+                    >
+                        Submit
+                    </button>
                 </div>
             </div>
         </div>
