@@ -1,14 +1,8 @@
 package main
 
 import (
-	// "github.com/alfiyafatima09/NextGoGen/backend/config"
-	// "encoding/xml"
-	// "fmt"
-
 	"fmt"
-
 	"github.com/alfiyafatima09/NextGoGen/backend/processor/xml"
-	// "github.com/gofiber/fiber/v2"
 	"gofr.dev/pkg/gofr"
 )
 
@@ -27,15 +21,12 @@ func handleConversion(ctx *gofr.Context) (interface{}, error) {
 		return nil, fmt.Errorf("invalid request format")
 	}
 
-	// Create converter instance
 	xmlConverter := xml.NewXMLToJSONConverter()
 
-	// Validate input file
 	if err := xmlConverter.ValidateXMLFile(req.FilePath); err != nil {
 		return nil, err
 	}
 
-	// Convert file
 	outputPath, err := xmlConverter.ConvertFile(req.FilePath)
 	if err != nil {
 		return nil, err
@@ -48,29 +39,11 @@ func handleConversion(ctx *gofr.Context) (interface{}, error) {
 }
 
 func main() {
+
 	app := gofr.New()
+
 	app.POST("/xml-json", handleConversion)
-	http.HandleFunc("/employees", HandleEmployees)
+	app.GET("/employees", HandleEmployees)
 
-	fmt.Println("Server is running on http://localhost:8080")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
-		log.Fatalf("Server failed to start: %v", err)
-	}
 	app.Run()
-	// fmt.Print(abc)
-
-	// cfg := config.LoadConfig()
-
-	// Initialize Kafka
-	// producer := kafka.NewProducer(cfg.KafkaBrokers)
-	// consumer := kafka.NewConsumer(cfg.KafkaBrokers)
-
-	// go processor.ProcessData(consumer, producer, cfg.RawTopic, cfg.ProcessedTopic)
-
-	// Initialize Fiber app
-	// app := fiber.New()
-	// routes.SetupRoutes(app, cfg, producer)
-
-	// Start server
-	// app.Listen(":3000")
 }

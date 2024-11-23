@@ -63,7 +63,7 @@ const Main: React.FC = () => {
                         {fileName ? (
                             <p className="text-green-600">File Uploaded: {fileName}</p>
                         ) : (
-                            <p>Drag and drop your CSV file here, or click to select a file.</p>
+                            <p>Drag and drop your file, or click to select a file.</p>
                         )}
 
                         <input
