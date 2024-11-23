@@ -2,7 +2,11 @@ package main
 
 import (
 	"fmt"
+	"strings"
+
+	"github.com/alfiyafatima09/NextGoGen/backend/processor/csv"
 	"github.com/alfiyafatima09/NextGoGen/backend/processor/xml"
+
 	"gofr.dev/pkg/gofr"
 )
 
@@ -18,22 +22,38 @@ type ConversionResponse struct {
 func handleConversion(ctx *gofr.Context) (interface{}, error) {
 	var req ConversionRequest
 	if err := ctx.Bind(&req); err != nil {
-		return nil, fmt.Errorf("invalid request format")
+		return nil, fmt.Errorf("invalid request format: %v", err)
+	}
+	path := req.FilePath
+
+	fmt.Println(path)
+	fmt.Println(strings.HasSuffix(path, ".xml"))
+	if strings.HasSuffix(path, ".xml") || true {
+		x, _ := xml.NewXMLToJSONConverter().ConvertFile(req.FilePath)
+		fmt.Println(x)
+	}
+	if strings.HasSuffix(path, ".csv") {
+		return csv.ConvertCSVToJSON(req.FilePath)
 	}
 
-	xmlConverter := xml.NewXMLToJSONConverter()
+	// x, _ := csv.ConvertCSVToJSON(req.FilePath)
+	// return string(x), nil
+	// return csv.ConvertCSVToJSON(req.FilePath)
+	// Create converter instance
+	// xmlConverter := cs.NewXMLToJSONConverter()
 
-	if err := xmlConverter.ValidateXMLFile(req.FilePath); err != nil {
-		return nil, err
-	}
+	// Validate input file
+	// if err := xmlConverter.ValidateXMLFile(req.FilePath); err != nil {
+	// 	return nil, err
+	// }
 
-	outputPath, err := xmlConverter.ConvertFile(req.FilePath)
-	if err != nil {
-		return nil, err
-	}
+	// outputPath, err := xmlConverter.ConvertFile(req.FilePath)
+	// if err != nil {
+	// return nil, err
+	// }
 
 	return ConversionResponse{
-		OutputPath: outputPath,
+		OutputPath: "outputPath",
 		Message:    "File converted successfully",
 	}, nil
 }
@@ -41,9 +61,8 @@ func handleConversion(ctx *gofr.Context) (interface{}, error) {
 func main() {
 
 	app := gofr.New()
-
-	app.POST("/xml-json", handleConversion)
+	app.POST("/toJson", handleConversion)
 	app.GET("/employees", HandleEmployees)
-
 	app.Run()
+
 }
