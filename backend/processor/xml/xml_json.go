@@ -6,15 +6,11 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	// "os"
 	"path/filepath"
 	"strings"
 )
 
-// XMLToJSONConverter handles the XML to JSON conversion
 type XMLToJSONConverter struct{}
-
-// XMLNode represents an XML node with attributes
 type XMLNode struct {
 	XMLName  xml.Name
 	Attrs    []xml.Attr `xml:",any,attr"`
@@ -22,7 +18,6 @@ type XMLNode struct {
 	Children []XMLNode  `xml:",any"`
 }
 
-// NewXMLToJSONConverter creates a new converter instance
 func NewXMLToJSONConverter() *XMLToJSONConverter {
 	return &XMLToJSONConverter{}
 }
@@ -33,13 +28,11 @@ func (c *XMLToJSONConverter) ConvertFile(inputPath string) (string, error) {
 		return "", fmt.Errorf("error reading XML file: %v", err)
 	}
 
-	// Create XMLNode to store the data
 	var root XMLNode
 	if err := xml.Unmarshal(xmlData, &root); err != nil {
 		return "", fmt.Errorf("error parsing XML: %v", err)
 	}
 
-	// Convert XMLNode to map
 	jsonMap := c.nodeToMap(&root)
 	fmt.Print(jsonMap)
 	jsonData, err := json.MarshalIndent(jsonMap, "", "    ")
@@ -59,7 +52,6 @@ func (c *XMLToJSONConverter) ConvertFile(inputPath string) (string, error) {
 func (c *XMLToJSONConverter) nodeToMap(node *XMLNode) map[string]interface{} {
 	result := make(map[string]interface{})
 
-	// Add attributes if present
 	if len(node.Attrs) > 0 {
 		attrs := make(map[string]string)
 		for _, attr := range node.Attrs {
@@ -68,18 +60,15 @@ func (c *XMLToJSONConverter) nodeToMap(node *XMLNode) map[string]interface{} {
 		result["@attributes"] = attrs
 	}
 
-	// Add children
 	childrenMap := make(map[string]interface{})
 	for _, child := range node.Children {
 		childContent := string(child.Content)
 		childName := child.XMLName.Local
 
-		// Skip empty nodes
 		if childName == "" {
 			continue
 		}
 
-		// Process child node
 		var value interface{}
 		if len(child.Children) > 0 {
 			value = c.nodeToMap(&child)
@@ -87,9 +76,7 @@ func (c *XMLToJSONConverter) nodeToMap(node *XMLNode) map[string]interface{} {
 			value = strings.TrimSpace(childContent)
 		}
 
-		// Add to children map
 		if existing, ok := childrenMap[childName]; ok {
-			// If key already exists, convert to array
 			switch existing.(type) {
 			case []interface{}:
 				childrenMap[childName] = append(existing.([]interface{}), value)
@@ -101,7 +88,6 @@ func (c *XMLToJSONConverter) nodeToMap(node *XMLNode) map[string]interface{} {
 		}
 	}
 
-	// Add text content if present and no children
 	if len(node.Content) > 0 && len(childrenMap) == 0 {
 		content := strings.TrimSpace(string(node.Content))
 		if content != "" {
@@ -109,7 +95,6 @@ func (c *XMLToJSONConverter) nodeToMap(node *XMLNode) map[string]interface{} {
 		}
 	}
 
-	// Merge children into result
 	for k, v := range childrenMap {
 		result[k] = v
 	}
@@ -117,7 +102,6 @@ func (c *XMLToJSONConverter) nodeToMap(node *XMLNode) map[string]interface{} {
 	return result
 }
 
-// changeExtensionToJSON changes the file extension to .json
 func changeExtensionToJSON(filename string) string {
 	extension := filepath.Ext(filename)
 	return filename[0:len(filename)-len(extension)] + ".json"

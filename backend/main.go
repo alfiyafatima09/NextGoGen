@@ -7,6 +7,7 @@ import (
 	"github.com/alfiyafatima09/NextGoGen/backend/processor/csv"
 	"github.com/alfiyafatima09/NextGoGen/backend/processor/xml"
 
+	"github.com/alfiyafatima09/NextGoGen/backend/processor/sql"
 	"gofr.dev/pkg/gofr"
 )
 
@@ -35,6 +36,11 @@ func handleConversion(ctx *gofr.Context) (interface{}, error) {
 	if strings.HasSuffix(path, ".csv") {
 		return csv.ConvertCSVToJSON(req.FilePath)
 	}
+	if strings.HasSuffix(path, ".sql") {
+		return sql.HandleEmployees(ctx)
+		// return sql.ConvertSQLToJSON(req.FilePath)
+
+	}
 
 	// x, _ := csv.ConvertCSVToJSON(req.FilePath)
 	// return string(x), nil
@@ -62,7 +68,7 @@ func main() {
 
 	app := gofr.New()
 	app.POST("/toJson", handleConversion)
-	app.GET("/employees", HandleEmployees)
+	// app.GET("/employees", sql.HandleEmployees)
 	app.Run()
 
 }

@@ -1,9 +1,10 @@
-package main
+package sql
 
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/go-sql-driver/mysql" 
+
+	_ "github.com/go-sql-driver/mysql"
 	"gofr.dev/pkg/gofr"
 )
 
