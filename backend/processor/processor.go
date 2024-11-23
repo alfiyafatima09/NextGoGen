@@ -3,7 +3,8 @@ package processor
 import (
 	"encoding/json"
 	"fmt"
-	"kafka-microservice/kafka"
+	"github.com/alfiyafatima09/NextGoGen/backend/kafka"
+	"time"
 )
 
 func ProcessData(consumer *kafka.KafkaConsumer, producer *kafka.KafkaProducer, rawTopic, processedTopic string) {

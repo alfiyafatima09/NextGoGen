@@ -3,7 +3,7 @@ package kafka
 import (
 	"log"
 
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 )
 
 type KafkaConsumer struct {

@@ -1,8 +1,9 @@
 package handlers
 
 import (
+	"encoding/json"
 	"github.com/gofiber/fiber/v2"
-	"kafka-microservice/kafka"
+	"github.com/alfiyafatima09/NextGoGen/backend/kafka"
 )
 
 func SendData(producer *kafka.KafkaProducer, topic string) fiber.Handler {

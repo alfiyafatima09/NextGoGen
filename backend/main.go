@@ -1,9 +1,10 @@
 package main
 
 import (
-	"kafka-microservice/config"
-	"kafka-microservice/kafka"
-	"kafka-microservice/routes"
+	"github.com/alfiyafatima09/NextGoGen/backend/config"
+	"github.com/alfiyafatima09/NextGoGen/backend/kafka"
+	"github.com/alfiyafatima09/NextGoGen/backend/routes"
+	"github.com/alfiyafatima09/NextGoGen/backend/processor"
 
 	"github.com/gofiber/fiber/v2"
 )

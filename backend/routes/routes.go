@@ -2,9 +2,9 @@ package routes
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"kafka-microservice/handlers"
-	"kafka-microservice/kafka"
-	"kafka-microservice/config"
+	"github.com/alfiyafatima09/NextGoGen/backend/handlers"
+	"github.com/alfiyafatima09/NextGoGen/backend/kafka"
+	"github.com/alfiyafatima09/NextGoGen/backend/config"
 )
 
 func SetupRoutes(app *fiber.App, cfg *config.Config, producer *kafka.KafkaProducer) {
