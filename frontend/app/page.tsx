@@ -1,4 +1,4 @@
-
+import Link from "next/link"
 
 export default function Home() {
   return (
@@ -9,10 +9,10 @@ export default function Home() {
 
       <div className="flex flex-col gap-12 pl-20 w-1/2">
         <h1 className="text-8xl font-bold text-gray-800">Make learning Fun!</h1>
-        <h2 className="text-2xl font-medium text-gray-600">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ullam quo vel iusto consequuntur quia exercitationem, culpa ducimus ratione eum officiis magni omnis odit quasi dolorum dolor aperiam tempore id. Provident.</h2>
-        <button className="bg-[#F37172] text-white px-8 py-3 rounded-lg hover:bg-blue-700 w-fit">
+        <h2 className="text-2xl font-medium text-gray-600">Transform any data, any format—databases, CSV, JSON, and more—effortlessly. Your go-to solution for seamless data processing!</h2>
+        <Link href="/main" className="bg-[#F37172] text-white px-8 py-3 rounded-lg w-fit">
           Get Started
-        </button>
+        </Link>
       </div>
 
       <div className="pr-40">
