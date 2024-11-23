@@ -1,15 +1,27 @@
 package main
 
 import (
-	"gofr.dev/pkg/gofr"
+	"kafka-microservice/config"
+	"kafka-microservice/kafka"
+	"kafka-microservice/routes"
+
+	"github.com/gofiber/fiber/v2"
 )
 
-func helloWorld(ctx *gofr.Context) (interface{}, error) {
-	return "Hello, World!", nil
-}
-
 func main() {
-	app := gofr.New()
-	app.GET("/", helloWorld)
-	app.Run()
+	cfg := config.LoadConfig()
+
+	// Initialize Kafka
+	producer := kafka.NewProducer(cfg.KafkaBrokers)
+	consumer := kafka.NewConsumer(cfg.KafkaBrokers)
+
+	// Start data processing
+	go processor.ProcessData(consumer, producer, cfg.RawTopic, cfg.ProcessedTopic)
+
+	// Initialize Fiber app
+	app := fiber.New()
+	routes.SetupRoutes(app, cfg, producer)
+
+	// Start server
+	app.Listen(":3000")
 }
