@@ -1,28 +1,16 @@
 package main
 
 import (
-	"github.com/alfiyafatima09/NextGoGen/backend/config"
-	"github.com/alfiyafatima09/NextGoGen/backend/kafka"
-	"github.com/alfiyafatima09/NextGoGen/backend/routes"
-	"github.com/alfiyafatima09/NextGoGen/backend/processor"
-
-	"github.com/gofiber/fiber/v2"
+	"fmt"
+	"log"
+	"net/http"
 )
 
 func main() {
-	cfg := config.LoadConfig()
+	http.HandleFunc("/employees", HandleEmployees)
 
-	// Initialize Kafka
-	producer := kafka.NewProducer(cfg.KafkaBrokers)
-	consumer := kafka.NewConsumer(cfg.KafkaBrokers)
-
-	// Start data processing
-	go processor.ProcessData(consumer, producer, cfg.RawTopic, cfg.ProcessedTopic)
-
-	// Initialize Fiber app
-	app := fiber.New()
-	routes.SetupRoutes(app, cfg, producer)
-
-	// Start server
-	app.Listen(":3000")
+	fmt.Println("Server is running on http://localhost:8080")
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+		log.Fatalf("Server failed to start: %v", err)
+	}
 }
