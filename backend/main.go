@@ -23,7 +23,7 @@ type ConversionResponse struct {
 }
 
 func handleConversion(ctx *gofr.Context) (interface{}, error) {
-
+	fmt.Println("Hello")
 	var req ConversionRequest
 	if err := ctx.Bind(&req); err != nil {
 		return nil, fmt.Errorf("invalid request format: %v", err)
@@ -31,7 +31,7 @@ func handleConversion(ctx *gofr.Context) (interface{}, error) {
 	path := req.FilePath
 
 	fmt.Println(path)
-	fmt.Println(strings.HasSuffix(path, ".xml"))
+	fmt.Println(strings.HasSuffix(path, ".csv"))
 	if strings.HasSuffix(path, ".xml") || true {
 		x, _ := xml.NewXMLToJSONConverter().ConvertFile(req.FilePath)
 		fmt.Println(x)

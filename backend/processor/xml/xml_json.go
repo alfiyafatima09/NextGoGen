@@ -22,31 +22,31 @@ func NewXMLToJSONConverter() *XMLToJSONConverter {
 	return &XMLToJSONConverter{}
 }
 
-func (c *XMLToJSONConverter) ConvertFile(inputPath string) (string, error) {
+func (c *XMLToJSONConverter) ConvertFile(inputPath string) ([]byte, error) {
 	xmlData, err := ioutil.ReadFile(inputPath)
 	if err != nil {
-		return "", fmt.Errorf("error reading XML file: %v", err)
+		return nil, fmt.Errorf("error reading XML file: %v", err)
 	}
 
 	var root XMLNode
 	if err := xml.Unmarshal(xmlData, &root); err != nil {
-		return "", fmt.Errorf("error parsing XML: %v", err)
+		return nil, fmt.Errorf("error parsing XML: %v", err)
 	}
 
 	jsonMap := c.nodeToMap(&root)
-	fmt.Print(jsonMap)
 	jsonData, err := json.MarshalIndent(jsonMap, "", "    ")
+	fmt.Print(jsonData)
 	if err != nil {
-		return "", fmt.Errorf("error converting to JSON: %v", err)
+		return nil, fmt.Errorf("error converting to JSON: %v", err)
 	}
 
 	outputPath := changeExtensionToJSON(inputPath)
 
 	if err := ioutil.WriteFile(outputPath, jsonData, 0644); err != nil {
-		return "", fmt.Errorf("error writing JSON file: %v", err)
+		return nil, fmt.Errorf("error writing JSON file: %v", err)
 	}
 
-	return outputPath, nil
+	return jsonData, nil
 }
 
 func (c *XMLToJSONConverter) nodeToMap(node *XMLNode) map[string]interface{} {
