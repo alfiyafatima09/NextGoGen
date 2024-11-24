@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/alfiyafatima09/NextGoGen/backend/processor/csv"
 	"github.com/alfiyafatima09/NextGoGen/backend/processor/xml"
+	"github.com/spf13/cobra"
 
 	"github.com/alfiyafatima09/NextGoGen/backend/processor/sql"
 	"gofr.dev/pkg/gofr"
@@ -21,6 +23,7 @@ type ConversionResponse struct {
 }
 
 func handleConversion(ctx *gofr.Context) (interface{}, error) {
+
 	var req ConversionRequest
 	if err := ctx.Bind(&req); err != nil {
 		return nil, fmt.Errorf("invalid request format: %v", err)
@@ -36,11 +39,11 @@ func handleConversion(ctx *gofr.Context) (interface{}, error) {
 	if strings.HasSuffix(path, ".csv") {
 		return csv.ConvertCSVToJSON(req.FilePath)
 	}
-	if strings.HasSuffix(path, ".sql") {
-		return sql.HandleEmployees(ctx)
-		// return sql.ConvertSQLToJSON(req.FilePath)
+	// if strings.HasSuffix(path, ".sql") {
+	// 	return sql.HandleEmployees(ctx)
+	// 	// return sql.ConvertSQLToJSON(req.FilePath)
 
-	}
+	// }
 
 	// x, _ := csv.ConvertCSVToJSON(req.FilePath)
 	// return string(x), nil
@@ -69,6 +72,40 @@ func main() {
 	app := gofr.New()
 	app.POST("/toJson", handleConversion)
 	// app.GET("/employees", sql.HandleEmployees)
+
+	var rootCmd = &cobra.Command{Use: "app"}
+	var sqlCmd = &cobra.Command{
+		Use:   "sql",
+		Short: "Process SQL database",
+		Run: func(cmd *cobra.Command, args []string) {
+			sql.HandleEmployees(cmd, args)
+		},
+		// Run: func(cmd *cobra.Command, args []string) {
+		// ctx := gofr.NewContext(nil, nil, nil)
+		// result, err := sql.HandleEmployees(ctx)
+		// if err != nil {
+		// 	fmt.Println("Error:", err)
+		// 	os.Exit(1)
+		// }
+		// fmt.Println(result)
+		// },
+		// func(cmd *cobra.Command, args []string) {
+		// 	ctx := gofr.NewContext(nil, nil, nil)
+		// 	result, err := sql.HandleEmployees(ctx)
+		// 	if err != nil {
+		// 		fmt.Println("Error:", err)
+		// 		os.Exit(1)
+		// 	}
+		// 	fmt.Println(result)
+		// },
+	}
+
+	rootCmd.AddCommand(sqlCmd)
+	if err := rootCmd.Execute(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 	app.Run()
 
 }

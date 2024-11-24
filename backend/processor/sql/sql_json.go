@@ -3,9 +3,11 @@ package sql
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 
 	_ "github.com/go-sql-driver/mysql"
-	"gofr.dev/pkg/gofr"
+	"github.com/spf13/cobra"
+	// "gofr.dev/pkg/gofr"
 )
 
 // Employee represents a single row of data from the database
@@ -26,12 +28,12 @@ const (
 )
 
 // HandleEmployees fetches data from the database and writes it as JSON to the response writer
-func HandleEmployees(ctx *gofr.Context) (interface{}, error) {
+func HandleEmployees(cmd *cobra.Command, args []string) ([]Employee, error) {
 	// Create a connection string
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPassword, dbHost, dbPort, dbName)
-
+	dbInput := strings.Join(args, " ")
 	// Connect to the database
-	db, err := sql.Open("mysql", dsn)
+	db, err := sql.Open(dbInput, dsn)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to connect to the database: %v", err)
 	}
