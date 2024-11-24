@@ -10,11 +10,11 @@ import (
 
 type CsvRecord map[string]string
 
-func ConvertCSVToJSON(csvFilePath string) (string, error) {
+func ConvertCSVToJSON(csvFilePath string) ([]byte, error) {
 	// fmt.Print("Hello 123")
 	file, err := os.Open(csvFilePath)
 	if err != nil {
-		return "", fmt.Errorf("could not open CSV file: %v", err)
+		return nil, fmt.Errorf("could not open CSV file: %v", err)
 	}
 	defer file.Close()
 
@@ -25,9 +25,9 @@ func ConvertCSVToJSON(csvFilePath string) (string, error) {
 	headers, err := reader.Read()
 	if err != nil {
 		if err == io.EOF {
-			return "", fmt.Errorf("CSV file is empty")
+			return nil, fmt.Errorf("CSV file is empty")
 		}
-		return "", fmt.Errorf("could not read header line: %v", err)
+		return nil, fmt.Errorf("could not read header line: %v", err)
 	}
 
 	for {
@@ -36,7 +36,7 @@ func ConvertCSVToJSON(csvFilePath string) (string, error) {
 			break
 		}
 		if err != nil {
-			return "", fmt.Errorf("could not read record: %v", err)
+			return nil, fmt.Errorf("could not read record: %v", err)
 		}
 
 		recordMap := make(CsvRecord)
@@ -48,8 +48,8 @@ func ConvertCSVToJSON(csvFilePath string) (string, error) {
 	}
 	jsonData, err := json.MarshalIndent(records, "", "  ")
 	if err != nil {
-		return "", fmt.Errorf("could not convert to JSON: %v", err)
+		return nil, fmt.Errorf("could not convert to JSON: %v", err)
 	}
-	fmt.Println(string(jsonData))
-	return string(jsonData), nil
+	// fmt.Println(jsonData)
+	return jsonData, nil
 }

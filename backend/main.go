@@ -18,25 +18,54 @@ type ConversionRequest struct {
 }
 
 type ConversionResponse struct {
-	OutputPath string `json:"outputPath"`
+	OutputPath []byte `json:"outputPath"`
 	Message    string `json:"message"`
 }
 
 func handleConversion(ctx *gofr.Context) (interface{}, error) {
-	fmt.Println("Hello")
+	// fmt.Println("Hello")
 	var req ConversionRequest
 	if err := ctx.Bind(&req); err != nil {
 		return nil, fmt.Errorf("invalid request format: %v", err)
 	}
+	// if err := ctx.Bind(&req); err != nil {
+	// 	return nil, fmt.Errorf("failed to bind request: %v", err)
+	// }
+	// fmt.Println(ctx)
 	path := req.FilePath
-
 	fmt.Println(path)
-	fmt.Println(strings.HasSuffix(path, ".csv"))
-	if strings.HasSuffix(path, ".xml") || true {
-		x, _ := xml.NewXMLToJSONConverter().ConvertFile(req.FilePath)
-		fmt.Println(x)
+	// fmt.Println(strings.HasSuffix(path, ".csv"))
+	// fmt.Println(strings.HasSuffix(path, ".csv"))
+	if strings.HasSuffix(path, ".xml") {
+		x, err := xml.NewXMLToJSONConverter().ConvertFile(req.FilePath)
+		// if err != nil {
+		// 	return nil, fmt.Errorf("failed to convert file: %v", err)
+
+		// }
+
+		outputFilePath := "output.json"
+		err = os.WriteFile(outputFilePath, x, 0644)
+		if err != nil {
+			return nil, fmt.Errorf("failed to write output file: %v", err)
+		}
+		fmt.Println("fdsdfdsfdsfsdf")
+		// fmt.Println(x, 'x')
+		// fmt.Println(outputFilePath)
+
+		return ConversionResponse{
+			OutputPath: x,
+			Message:    "File converted successfully",
+		}, nil
+		// return ConversionResponse{
+		// 	OutputPath: string(x),
+		// 	Message:    "File converted successfully",
+		// }, nil
+		// return x, nil
 	}
 	if strings.HasSuffix(path, ".csv") {
+		// print("Hello")
+		var x, _ = csv.ConvertCSVToJSON(req.FilePath)
+		print(x)
 		return csv.ConvertCSVToJSON(req.FilePath)
 	}
 	// if strings.HasSuffix(path, ".sql") {
@@ -62,7 +91,7 @@ func handleConversion(ctx *gofr.Context) (interface{}, error) {
 	// }
 
 	return ConversionResponse{
-		OutputPath: "outputPath",
+		OutputPath: nil,
 		Message:    "File converted successfully",
 	}, nil
 }
