@@ -7,10 +7,8 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/spf13/cobra"
-	// "gofr.dev/pkg/gofr"
 )
 
-// Employee represents a single row of data from the database
 type Employee struct {
 	ID    int    `json:"id"`
 	Name  string `json:"name"`
@@ -28,40 +26,33 @@ const (
 )
 
 // HandleEmployees fetches data from the database and writes it as JSON to the response writer
-func HandleEmployees(cmd *cobra.Command, args []string) ([]Employee, error) {
-	// Create a connection string
+func ConvertSQLToJSON(cmd *cobra.Command, args []string) ([]Employee, error) {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPassword, dbHost, dbPort, dbName)
 	dbInput := strings.Join(args, " ")
-	// Connect to the database
 	db, err := sql.Open(dbInput, dsn)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to connect to the database: %v", err)
+		return nil, fmt.Errorf("failed to connect to the database: %v", err)
 	}
 	defer db.Close()
 
-	// Query data
-	query := "SELECT id, name, email, age FROM employees" // Modify `employees` to your actual table name
-	rows, err := db.Query(query)
+	rows, err := db.Query("SELECT id, name, email, age FROM employees")
 	if err != nil {
-		return nil, fmt.Errorf("Failed to fetch data from the database: %v", err)
+		return nil, fmt.Errorf("failed to fetch data from the database: %v", err)
 	}
 	defer rows.Close()
 
-	// Iterate over rows and construct a slice of Employee structs
 	var employees []Employee
 	for rows.Next() {
 		var emp Employee
 		if err := rows.Scan(&emp.ID, &emp.Name, &emp.Email, &emp.Age); err != nil {
-			return nil, fmt.Errorf("Error scanning database rows: %v", err)
+			return nil, fmt.Errorf("error scanning database rows: %v", err)
 		}
 		employees = append(employees, emp)
 	}
 
-	// Check for errors during iteration
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("Error iterating through rows: %v", err)
+		return nil, fmt.Errorf("error iterating through rows: %v", err)
 	}
 
-	// Return the list of employees as JSON
 	return employees, nil
 }

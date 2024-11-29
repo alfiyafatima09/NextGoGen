@@ -21,6 +21,20 @@ type XMLNode struct {
 func NewXMLToJSONConverter() *XMLToJSONConverter {
 	return &XMLToJSONConverter{}
 }
+func (c *XMLToJSONConverter) ConvertBytesToJson(xmlBytes []byte) ([]byte, error) {
+	var root XMLNode
+	if err := xml.Unmarshal(xmlBytes, &root); err != nil {
+		return nil, fmt.Errorf("error parsing XML: %v", err)
+	}
+
+	jsonMap := c.nodeToMap(&root)
+	jsonData, err := json.MarshalIndent(jsonMap, "", "    ")
+	if err != nil {
+		return nil, fmt.Errorf("error converting to JSON: %v", err)
+	}
+
+	return jsonData, nil
+}
 
 func (c *XMLToJSONConverter) ConvertFile(inputPath string) ([]byte, error) {
 	xmlData, err := ioutil.ReadFile(inputPath)
