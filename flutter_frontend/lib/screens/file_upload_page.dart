@@ -153,7 +153,8 @@ class _FileUploadPageState extends State<FileUploadPage> {
                         try {
                           final response = await sendFile(selectedFile!);
                           setState(() {
-                            _jsonResponse = JsonFormatter.prettyJson(response);
+                            _jsonResponse =
+                                JsonEncoder.withIndent('  ').convert(response);
                             _isUploading = false;
                             _showJsonView = true;
                           });
@@ -200,56 +201,8 @@ class _FileUploadPageState extends State<FileUploadPage> {
 
   Widget _buildFullScreenJsonViewer() {
     return JsonViewer(
-      jsonData: _jsonResponse,
+      jsonData: jsonDecode(_jsonResponse!),
       initiallyExpanded: true,
-    );
-    return Container(
-      color: Colors.grey[900],
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            color: Colors.blue,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  selectedFile?.name ?? 'JSON Response',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.copy, color: Colors.white),
-                  onPressed: () {
-                    Clipboard.setData(ClipboardData(text: _jsonResponse!));
-                    SnackbarUtils.showSuccess(context, 'Copied to clipboard');
-                  },
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  child: SelectableText(
-                    _jsonResponse!,
-                    style: TextStyle(
-                      color: Colors.green[300],
-                      fontFamily: 'monospace',
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
