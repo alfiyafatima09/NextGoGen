@@ -17,37 +17,47 @@ class FileService {
         body: json.encoder.convert(
             {"filePath": file.path!.replaceAll('/Volumes/chetan/', '')}));
   }
-
-  // static void downloadFile(Uint8List bytes, String fileName) {
-  //   final blob = html.Blob([bytes]);
-  //   final url = html.Url.createObjectUrlFromBlob(blob);
-  //   final anchor = html.AnchorElement(href: url)
-  //     ..setAttribute("download", fileName)
-  //     ..click();
-  //   html.Url.revokeObjectUrl(url);
-  // }
 }
 
-Future<void> sendFile(PlatformFile file) async {
-  List<int> fileBytes = file.bytes!;
-  String base64File = base64Encode(fileBytes);
-  print(base64File);
+Future<Map<String, dynamic>> sendFile(PlatformFile file) async {
+  // For web platform, use file.bytes
+  // For desktop/mobile, use file.path to read file
+  List<int> fileBytes;
+  if (file.bytes != null) {
+    fileBytes = file.bytes!;
+  } else if (file.path != null) {
+    fileBytes = await File(file.path!).readAsBytes();
+  } else {
+    throw Exception('Invalid file: No content available');
+  }
 
-  // Create the JSON payload
+  String base64File = base64Encode(fileBytes);
+
   var payload = jsonEncode({
     'fileData': base64File,
-    'extension': file.extension,
+    'extension': file.extension ?? '',
     'fileName': file.name,
   });
-  var response = await http.post(
-    Uri.parse(backendUrlEndpoint),
-    headers: {'Content-Type': 'application/json'},
-    body: payload,
-  );
 
-  if (response.statusCode == 200) {
-    print('File uploaded successfully');
-  } else {
-    print('File upload failed');
+  try {
+    var response = await http.post(
+      Uri.parse(backendUrlEndpoint),
+      headers: {'Content-Type': 'application/json'},
+      body: payload,
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      Map<String, dynamic> responseBody = jsonDecode(response.body);
+      if (responseBody['data'] == null ||
+          responseBody['data']['outputPath'] == null) {
+        throw Exception('Invalid response format from server');
+      }
+      var jsonData = base64Decode(responseBody['data']['outputPath']);
+      return jsonDecode(utf8.decode(jsonData));
+    } else {
+      throw Exception('Failed to convert file: ${response.statusCode}');
+    }
+  } catch (e) {
+    throw Exception('Error processing file: $e');
   }
 }
