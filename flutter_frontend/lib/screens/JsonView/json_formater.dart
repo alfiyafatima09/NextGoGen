@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
@@ -8,10 +10,10 @@ class JsonViewer extends StatefulWidget {
   final bool initiallyExpanded;
 
   const JsonViewer({
-    Key? key,
+    super.key,
     required this.jsonData,
     this.initiallyExpanded = false,
-  }) : super(key: key);
+  });
 
   @override
   _JsonViewerState createState() => _JsonViewerState();
@@ -29,39 +31,46 @@ class _JsonViewerState extends State<JsonViewer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: Colors.grey[900],
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              color: Colors.blue,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'JSON Response',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: const Text('JSON Viewer', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.blue,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.copy, color: Colors.white),
+            onPressed: () => _copyToClipboard(context),
+          ),
+        ],
+      ),
+      body: Center(
+        child: Container(
+          margin: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
+            border: Border.all(color: Colors.grey),
+          ),
+          constraints: BoxConstraints(
+              maxWidth: 800,
+              maxHeight: MediaQuery.of(context).size.height - 100),
+          child: Center(
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: _buildJsonTree(widget.jsonData, 0),
                     ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.copy, color: Colors.white),
-                    onPressed: () => _copyToClipboard(context),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: _buildJsonTree(widget.jsonData, 0),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -69,9 +78,9 @@ class _JsonViewerState extends State<JsonViewer> {
 
   Widget _buildJsonTree(dynamic data, int depth) {
     if (data == null) {
-      return _buildLeafNode('null', Colors.grey);
+      return _buildLeafNode('null', Colors.black);
     } else if (data is String) {
-      return _buildLeafNode('"$data"', Colors.green[300]!);
+      return _buildLeafNode('"$data"', Colors.green[700]!);
     } else if (data is num) {
       return _buildLeafNode(data.toString(), Colors.blue[300]!);
     } else if (data is bool) {
@@ -112,18 +121,18 @@ class _JsonViewerState extends State<JsonViewer> {
             children: [
               Icon(
                 isExpanded ? Icons.arrow_drop_down : Icons.arrow_right,
-                color: Colors.white,
+                color: Colors.black54,
               ),
               Text(
                 '[${list.length}]',
-                style: const TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.black),
               ),
             ],
           ),
         ),
         if (isExpanded)
           Padding(
-            padding: EdgeInsets.only(left: 16.0),
+            padding: const EdgeInsets.only(left: 16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: list
@@ -134,7 +143,7 @@ class _JsonViewerState extends State<JsonViewer> {
                         children: [
                           Text(
                             '${entry.key}: ',
-                            style: TextStyle(color: Colors.grey[400]),
+                            style: TextStyle(color: Colors.black54),
                           ),
                           Expanded(
                               child: _buildJsonTree(entry.value, depth + 1)),
@@ -164,18 +173,18 @@ class _JsonViewerState extends State<JsonViewer> {
             children: [
               Icon(
                 isExpanded ? Icons.arrow_drop_down : Icons.arrow_right,
-                color: Colors.white,
+                color: Colors.black54,
               ),
               Text(
                 '{${map.length}}',
-                style: const TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.black54),
               ),
             ],
           ),
         ),
         if (isExpanded)
           Padding(
-            padding: EdgeInsets.only(left: 16.0),
+            padding: const EdgeInsets.only(left: 16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: map.entries.map((entry) {
@@ -184,7 +193,7 @@ class _JsonViewerState extends State<JsonViewer> {
                   children: [
                     Text(
                       '"${entry.key}": ',
-                      style: TextStyle(color: Colors.grey[400]),
+                      style: TextStyle(color: Colors.black87),
                     ),
                     Expanded(child: _buildJsonTree(entry.value, depth + 1)),
                   ],
@@ -197,7 +206,8 @@ class _JsonViewerState extends State<JsonViewer> {
   }
 
   void _copyToClipboard(BuildContext context) {
-    final jsonString = JsonEncoder.withIndent('  ').convert(widget.jsonData);
+    final jsonString =
+        const JsonEncoder.withIndent('  ').convert(widget.jsonData);
     Clipboard.setData(ClipboardData(text: jsonString));
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('JSON copied to clipboard')),
