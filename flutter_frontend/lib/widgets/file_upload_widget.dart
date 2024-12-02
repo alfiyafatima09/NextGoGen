@@ -7,17 +7,16 @@ class FileUploadWidget extends StatelessWidget {
   final String? selectedFileName;
 
   const FileUploadWidget({
-    Key? key,
+    super.key,
     required this.isDragging,
     required this.pickFile,
     this.selectedFileName,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      // width: MediaQuery.of(context).size.width * 0.8,
-      // height: MediaQuery.of(context).size.height * 0.4,
+      margin: const EdgeInsets.all(10),
       child: DottedBorder(
         borderType: BorderType.RRect,
         radius: const Radius.circular(20),
