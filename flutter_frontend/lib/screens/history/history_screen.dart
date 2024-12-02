@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_frontend/consts.dart';
 import 'package:flutter_frontend/models/file_history.dart';
 import 'package:flutter_frontend/services/history_service.dart';
-import 'package:flutter_frontend/utils/date_formatter.dart';
-import 'package:flutter_frontend/utils/file_type_util.dart';
+import 'package:flutter_frontend/utils/file_upload_util.dart';
 import 'package:flutter_frontend/utils/snackbar_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
